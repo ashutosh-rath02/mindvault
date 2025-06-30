@@ -171,52 +171,21 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ note }) => {
     debouncedSave(localTitle, newContent);
   };
 
-  // Handle voice transcript - insert at cursor position WITHOUT replacing content
+  // Handle voice transcript - SIMPLE APPEND
   const handleVoiceTranscript = (transcript: string) => {
-    if (!textareaRef.current || !transcript.trim()) return;
+    if (!transcript.trim()) return;
     
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+    // Simple append with proper spacing
+    const needsSpace = localContent.length > 0 && !localContent.endsWith(' ') && !localContent.endsWith('\n');
+    const newContent = localContent + (needsSpace ? ' ' : '') + transcript.trim();
     
-    // Get the current content
-    const currentContent = localContent;
-    
-    // Split content at cursor position
-    const beforeCursor = currentContent.substring(0, start);
-    const afterCursor = currentContent.substring(end);
-    
-    // Determine spacing needs
-    const needsSpaceBefore = beforeCursor.length > 0 && 
-                            !beforeCursor.endsWith(' ') && 
-                            !beforeCursor.endsWith('\n') && 
-                            !beforeCursor.endsWith('\t');
-    
-    const needsSpaceAfter = afterCursor.length > 0 && 
-                           !afterCursor.startsWith(' ') && 
-                           !afterCursor.startsWith('\n') && 
-                           !afterCursor.startsWith('\t');
-    
-    // Build the new content with proper spacing
-    const spaceBefore = needsSpaceBefore ? ' ' : '';
-    const spaceAfter = needsSpaceAfter ? ' ' : '';
-    const insertText = spaceBefore + transcript.trim() + spaceAfter;
-    
-    // Create new content
-    const newContent = beforeCursor + insertText + afterCursor;
-    const newCursorPosition = start + insertText.length;
-    
-    // Update the content state
     setLocalContent(newContent);
     debouncedSave(localTitle, newContent);
     
-    // Set cursor position after the inserted text
-    requestAnimationFrame(() => {
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-        textareaRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
-      }
-    });
+    // Focus textarea
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
   };
 
   // Manual save function
