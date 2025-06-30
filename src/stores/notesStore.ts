@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Note, Folder, AIInsight } from '../types';
-import { db } from '../lib/supabase';
+import { db, testConnection } from '../lib/supabase';
 
 interface NotesState {
   notes: Note[];
@@ -10,6 +10,7 @@ interface NotesState {
   loading: boolean;
   searchQuery: string;
   filter: string | null;
+  connectionError: string | null;
   
   // Actions
   loadNotes: (userId: string) => Promise<void>;
@@ -22,6 +23,8 @@ interface NotesState {
   setFilter: (filter: string | null) => void;
   loadInsights: (noteId: string) => Promise<void>;
   getFilteredNotes: () => Note[];
+  testConnection: () => Promise<boolean>;
+  clearConnectionError: () => void;
 }
 
 export const useNotesStore = create<NotesState>((set, get) => ({
@@ -32,9 +35,30 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   loading: false,
   searchQuery: '',
   filter: null,
+  connectionError: null,
+
+  testConnection: async () => {
+    try {
+      const isConnected = await testConnection();
+      if (!isConnected) {
+        set({ connectionError: 'Unable to connect to the database. Please check your internet connection and try again.' });
+      } else {
+        set({ connectionError: null });
+      }
+      return isConnected;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown connection error';
+      set({ connectionError: errorMessage });
+      return false;
+    }
+  },
+
+  clearConnectionError: () => {
+    set({ connectionError: null });
+  },
 
   loadNotes: async (userId: string) => {
-    set({ loading: true });
+    set({ loading: true, connectionError: null });
     try {
       const { data, error } = await db.getNotes(userId);
       if (error) throw error;
@@ -47,22 +71,39 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       
       set({ notes: notesWithTags, loading: false });
     } catch (error) {
-      console.error('Error loading notes:', error);
-      set({ loading: false });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load notes';
+      console.error('Error loading notes:', errorMessage);
+      set({ 
+        loading: false, 
+        connectionError: `Error loading notes: ${errorMessage}` 
+      });
     }
   },
 
   loadFolders: async (userId: string) => {
+    set({ connectionError: null });
     try {
       const { data, error } = await db.getFolders(userId);
       if (error) throw error;
       set({ folders: data || [] });
     } catch (error) {
-      console.error('Error loading folders:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load folders';
+      console.error('Error loading folders:', errorMessage);
+      set({ 
+        connectionError: `Error loading folders: ${errorMessage}` 
+      });
+      
+      // If it's a network error, suggest checking connection
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('Network error')) {
+        set({ 
+          connectionError: 'Unable to connect to the database. Please check your internet connection and try refreshing the page.' 
+        });
+      }
     }
   },
 
   createNote: async (noteData: Partial<Note>) => {
+    set({ connectionError: null });
     try {
       // Ensure tags is always an array
       const noteWithTags = {
@@ -86,12 +127,15 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       
       return newNote;
     } catch (error) {
-      console.error('Error creating note:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create note';
+      console.error('Error creating note:', errorMessage);
+      set({ connectionError: `Error creating note: ${errorMessage}` });
       throw error;
     }
   },
 
   updateNote: async (id: string, updates: Partial<Note>) => {
+    set({ connectionError: null });
     try {
       // Ensure tags is always an array if provided
       const updatesWithTags = {
@@ -128,12 +172,15 @@ export const useNotesStore = create<NotesState>((set, get) => ({
         };
       });
     } catch (error) {
-      console.error('Error updating note:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update note';
+      console.error('Error updating note:', errorMessage);
+      set({ connectionError: `Error updating note: ${errorMessage}` });
       throw error;
     }
   },
 
   deleteNote: async (id: string) => {
+    set({ connectionError: null });
     try {
       const { error } = await db.deleteNote(id);
       if (error) throw error;
@@ -143,7 +190,9 @@ export const useNotesStore = create<NotesState>((set, get) => ({
         selectedNote: state.selectedNote?.id === id ? null : state.selectedNote
       }));
     } catch (error) {
-      console.error('Error deleting note:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete note';
+      console.error('Error deleting note:', errorMessage);
+      set({ connectionError: `Error deleting note: ${errorMessage}` });
       throw error;
     }
   },
@@ -200,6 +249,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   },
 
   loadInsights: async (noteId: string) => {
+    set({ connectionError: null });
     try {
       const { data, error } = await db.getInsights(noteId);
       if (error) throw error;
@@ -211,7 +261,9 @@ export const useNotesStore = create<NotesState>((set, get) => ({
         }
       }));
     } catch (error) {
-      console.error('Error loading insights:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load insights';
+      console.error('Error loading insights:', errorMessage);
+      set({ connectionError: `Error loading insights: ${errorMessage}` });
     }
   },
 }));
