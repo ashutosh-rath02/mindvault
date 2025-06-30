@@ -171,22 +171,46 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ note }) => {
     debouncedSave(localTitle, newContent);
   };
 
-  // Handle voice transcript - SIMPLE APPEND
-  const handleVoiceTranscript = (transcript: string) => {
-    if (!transcript.trim()) return;
+  // Handle voice transcript - FIXED VERSION
+  const handleVoiceTranscript = useCallback((transcript: string) => {
+    console.log('Voice transcript received:', transcript);
+    console.log('Current content length:', localContent.length);
     
-    // Simple append with proper spacing
-    const needsSpace = localContent.length > 0 && !localContent.endsWith(' ') && !localContent.endsWith('\n');
-    const newContent = localContent + (needsSpace ? ' ' : '') + transcript.trim();
-    
-    setLocalContent(newContent);
-    debouncedSave(localTitle, newContent);
-    
-    // Focus textarea
-    if (textareaRef.current) {
-      textareaRef.current.focus();
+    if (!transcript.trim()) {
+      console.log('Empty transcript, ignoring');
+      return;
     }
-  };
+    
+    // Get the current content at the time of the callback
+    setLocalContent(currentContent => {
+      console.log('Current content in callback:', currentContent.length);
+      
+      // Simple append with proper spacing
+      const needsSpace = currentContent.length > 0 && 
+                        !currentContent.endsWith(' ') && 
+                        !currentContent.endsWith('\n') && 
+                        !currentContent.endsWith('\t');
+      
+      const newContent = currentContent + (needsSpace ? ' ' : '') + transcript.trim();
+      
+      console.log('New content length:', newContent.length);
+      
+      // Save the new content
+      debouncedSave(localTitle, newContent);
+      
+      return newContent;
+    });
+    
+    // Focus textarea after a short delay
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        // Move cursor to end
+        const length = textareaRef.current.value.length;
+        textareaRef.current.setSelectionRange(length, length);
+      }
+    }, 100);
+  }, [localTitle, debouncedSave]); // Remove localContent from dependencies
 
   // Manual save function
   const handleManualSave = async () => {
