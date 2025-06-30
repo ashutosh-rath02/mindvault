@@ -46,7 +46,6 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ note }) => {
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const currentNoteIdRef = useRef<string | null>(null);
-  const cursorPositionRef = useRef<number>(0);
   const { updateNote, deleteNote } = useNotesStore();
   const { user } = useAuthStore();
 
@@ -76,24 +75,6 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ note }) => {
       setAiInsights({});
     }
   }, [note?.id]); // Only depend on note ID, not the entire note object
-
-  // Track cursor position when user interacts with textarea
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    cursorPositionRef.current = e.target.selectionStart;
-    handleContentChange(e.target.value);
-  };
-
-  const handleTextareaClick = () => {
-    if (textareaRef.current) {
-      cursorPositionRef.current = textareaRef.current.selectionStart;
-    }
-  };
-
-  const handleTextareaKeyUp = () => {
-    if (textareaRef.current) {
-      cursorPositionRef.current = textareaRef.current.selectionStart;
-    }
-  };
 
   // AI Analysis function
   const analyzeWithAI = useCallback(async (content: string) => {
@@ -192,31 +173,38 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ note }) => {
 
   // Handle voice transcript - insert at cursor position
   const handleVoiceTranscript = (transcript: string) => {
-    const currentPosition = cursorPositionRef.current;
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const currentPosition = textarea.selectionStart;
     const beforeCursor = localContent.substring(0, currentPosition);
     const afterCursor = localContent.substring(currentPosition);
     
     // Add appropriate spacing
-    const spacing = beforeCursor.length > 0 && !beforeCursor.endsWith(' ') && !beforeCursor.endsWith('\n') ? ' ' : '';
-    const newContent = beforeCursor + spacing + transcript + afterCursor;
+    const needsSpaceBefore = beforeCursor.length > 0 && 
+                            !beforeCursor.endsWith(' ') && 
+                            !beforeCursor.endsWith('\n') && 
+                            !beforeCursor.endsWith('\t');
     
+    const spaceBefore = needsSpaceBefore ? ' ' : '';
+    const spaceAfter = afterCursor.length > 0 && 
+                      !afterCursor.startsWith(' ') && 
+                      !afterCursor.startsWith('\n') ? ' ' : '';
+    
+    const newContent = beforeCursor + spaceBefore + transcript + spaceAfter + afterCursor;
+    const newCursorPosition = currentPosition + spaceBefore.length + transcript.length + spaceAfter.length;
+    
+    // Update content
     setLocalContent(newContent);
     debouncedSave(localTitle, newContent);
     
-    // Update cursor position to after the inserted text
-    const newCursorPosition = currentPosition + spacing.length + transcript.length;
-    cursorPositionRef.current = newCursorPosition;
-    
-    // Focus back to textarea and set cursor position
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-      // Use setTimeout to ensure the content is updated before setting cursor position
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
-        }
-      }, 0);
-    }
+    // Focus textarea and set cursor position after content update
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
+      }
+    }, 0);
   };
 
   // Manual save function
@@ -517,9 +505,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ note }) => {
           <textarea
             ref={textareaRef}
             value={localContent}
-            onChange={handleTextareaChange}
-            onClick={handleTextareaClick}
-            onKeyUp={handleTextareaKeyUp}
+            onChange={(e) => handleContentChange(e.target.value)}
             placeholder="Start writing your thoughts... (Use the microphone button to add voice input)"
             className="w-full resize-none border-none outline-none text-gray-900 placeholder-gray-400 bg-transparent"
             style={{ 
