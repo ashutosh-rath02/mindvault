@@ -10,14 +10,12 @@ MindVault is a sophisticated, AI-powered note-taking application that helps you 
 - **AI-Powered Analysis**: Automatic mood detection using Plutchik's Wheel of Emotions
 - **Smart Categorization**: AI automatically categorizes your notes
 - **Knowledge Graph**: Visualize connections between your notes
-- **Advanced Search**: Semantic search powered by AI
+- **Advanced Search**: Full-text search with filtering
 - **Analytics Dashboard**: Insights into your writing patterns and productivity
 
 ### AI & Machine Learning
 - **Emotion Analysis**: 48 different emotions from Plutchik's Wheel
 - **Content Insights**: AI-generated summaries and key points
-- **Semantic Search**: Find notes by meaning, not just keywords (powered by Dappier)
-- **AI Copilot**: Ask questions about your notes and get intelligent responses
 - **Pattern Recognition**: Discover connections and themes in your knowledge base
 
 ### Organization & Productivity
@@ -33,7 +31,6 @@ MindVault is a sophisticated, AI-powered note-taking application that helps you 
 - **Backend**: Supabase (PostgreSQL, Auth, Real-time)
 - **AI Services**: 
   - Google Gemini for content analysis
-  - **Dappier** for semantic search and AI copilot
   - ElevenLabs for voice transcription
 - **Visualization**: D3.js for knowledge graphs
 - **Monetization**: RevenueCat for subscription management
@@ -57,7 +54,6 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 # AI Services (Optional but recommended)
 VITE_GEMINI_API_KEY=your_gemini_api_key_here
 VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
-VITE_DAPPIER_API_KEY=your_dappier_api_key_here
 
 # Monetization (Optional)
 VITE_REVENUECAT_API_KEY=your_revenuecat_api_key_here
@@ -80,7 +76,6 @@ VITE_REVENUECAT_API_KEY=your_revenuecat_api_key_here
 3. **Configure AI Services** (Optional)
    - **Google Gemini**: Get API key from Google AI Studio
    - **ElevenLabs**: Sign up for voice transcription API
-   - **Dappier**: Get API key for semantic search (see sponsor benefits below)
 
 4. **Start Development**
    ```bash
@@ -90,18 +85,6 @@ VITE_REVENUECAT_API_KEY=your_revenuecat_api_key_here
 ## 🎁 Sponsor Benefits & Integrations
 
 This project leverages several sponsor benefits from the Bolt.new hackathon:
-
-### 🔍 **Dappier AI** - Enhanced Search & Copilot ⭐ INTEGRATED
-- **Benefit**: $25 in API credits + 50% off with code `BOLT50`
-- **Integration**: 
-  - **Semantic Search**: `src/components/search/EnhancedSearch.tsx`
-  - **AI Copilot**: `src/components/ai/AICopilot.tsx`
-  - **API Client**: `src/lib/dappier.ts`
-- **Setup**: Sign up at Dappier → Get API key → Add to `.env`
-- **Features**: 
-  - AI-powered semantic search that understands meaning
-  - Intelligent note recommendations
-  - Conversational AI copilot for note assistance
 
 ### 💰 **RevenueCat** - Monetization ⭐ READY TO INTEGRATE
 - **Benefit**: 100% free for Bolt participants
@@ -138,26 +121,6 @@ This project leverages several sponsor benefits from the Bolt.new hackathon:
 - **DEV++**: Free 1-year membership with exclusive offers
 - **Algorand/IPFS**: $512 value in API credits
 
-## 📍 Where Dappier is Used
-
-Dappier AI is integrated in the following components:
-
-1. **Enhanced Search** (`src/components/search/EnhancedSearch.tsx`):
-   - Semantic search that understands context and meaning
-   - Fallback to regular search if API is unavailable
-   - Recent searches and quick filters
-
-2. **AI Copilot** (`src/components/ai/AICopilot.tsx`):
-   - Conversational AI for asking questions about notes
-   - Context-aware responses based on note content
-   - Intelligent suggestions for follow-up questions
-
-3. **API Client** (`src/lib/dappier.ts`):
-   - Semantic search functionality
-   - Copilot question answering
-   - Insights generation
-   - Fallback search implementation
-
 ## 🏗️ Architecture
 
 ### Database Schema
@@ -170,9 +133,8 @@ Dappier AI is integrated in the following components:
 
 ### AI Pipeline
 1. **Content Analysis**: Gemini analyzes mood and categorizes content
-2. **Semantic Processing**: Dappier creates embeddings for search
-3. **Knowledge Graph**: D3.js visualizes note relationships
-4. **Insights Generation**: AI identifies patterns and connections
+2. **Knowledge Graph**: D3.js visualizes note relationships
+3. **Insights Generation**: AI identifies patterns and connections
 
 ### Security
 - Row Level Security (RLS) on all tables
@@ -196,7 +158,6 @@ Dappier AI is integrated in the following components:
 Ensure all environment variables are set in Netlify:
 - Supabase credentials
 - AI service API keys
-- Dappier configuration
 - RevenueCat settings
 
 ## 📈 Analytics & Monitoring
@@ -239,7 +200,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - **Bolt.new** for the amazing development platform
 - **Sponsor Partners** for providing essential services:
-  - **Dappier** for AI-powered search and copilot features
   - **RevenueCat** for monetization infrastructure
   - **Lingo** for internationalization capabilities
   - **Tavus** for video processing potential
@@ -252,7 +212,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🔗 Links
 
 - **Live Demo**: [Your deployed URL]
-- **Dappier Integration**: Enhanced search and AI copilot
 - **RevenueCat Setup**: Ready for subscription monetization
 - **API Documentation**: [Link to API docs]
 

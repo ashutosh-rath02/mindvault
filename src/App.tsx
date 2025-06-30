@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Search, Settings, Download, MessageCircle, DollarSign } from 'lucide-react';
+import { FileText, Search, Settings, Download, DollarSign } from 'lucide-react';
 import { AuthForm } from './components/auth/AuthForm';
 import { Sidebar } from './components/layout/Sidebar';
 import { NoteEditor } from './components/notes/NoteEditor';
@@ -10,8 +10,6 @@ import { KnowledgeGraph } from './components/knowledge/KnowledgeGraph';
 import { Analytics } from './components/dashboard/Analytics';
 import { CategoryManager } from './components/notes/CategoryManager';
 import { ExportImport } from './components/features/ExportImport';
-import { AICopilot } from './components/ai/AICopilot';
-import { EnhancedSearch } from './components/search/EnhancedSearch';
 import { MonetizationPanel } from './components/monetization/MonetizationPanel';
 import { ToastContainer } from './components/ui/Toast';
 import { useAuthStore } from './stores/authStore';
@@ -26,8 +24,6 @@ function App() {
   const [isResizing, setIsResizing] = useState(false);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [showExportImport, setShowExportImport] = useState(false);
-  const [showAICopilot, setShowAICopilot] = useState(false);
-  const [showEnhancedSearch, setShowEnhancedSearch] = useState(false);
   const [showMonetization, setShowMonetization] = useState(false);
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([]);
 
@@ -187,7 +183,6 @@ function App() {
                     placeholder="Search across all notes... (⌘K)"
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
-                    onFocus={() => setShowEnhancedSearch(true)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   {searchQuery && (
@@ -213,13 +208,6 @@ function App() {
                 
                 {/* Action Buttons */}
                 <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setShowAICopilot(true)}
-                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
-                    title="AI Copilot"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                  </button>
                   <button
                     onClick={() => setShowMonetization(true)}
                     className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
@@ -271,16 +259,6 @@ function App() {
         <ExportImport 
           isOpen={showExportImport} 
           onClose={() => setShowExportImport(false)} 
-        />
-        <AICopilot 
-          isOpen={showAICopilot} 
-          onClose={() => setShowAICopilot(false)} 
-        />
-        <EnhancedSearch 
-          isOpen={showEnhancedSearch} 
-          onClose={() => setShowEnhancedSearch(false)} 
-          searchQuery={searchQuery}
-          onSearch={handleSearch}
         />
         <MonetizationPanel 
           isOpen={showMonetization} 
