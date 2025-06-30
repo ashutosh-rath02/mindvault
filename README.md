@@ -16,7 +16,7 @@ MindVault is a sophisticated, AI-powered note-taking application that helps you 
 ### AI & Machine Learning
 - **Emotion Analysis**: 48 different emotions from Plutchik's Wheel
 - **Content Insights**: AI-generated summaries and key points
-- **Semantic Search**: Find notes by meaning, not just keywords
+- **Semantic Search**: Find notes by meaning, not just keywords (powered by Dappier)
 - **AI Copilot**: Ask questions about your notes and get intelligent responses
 - **Pattern Recognition**: Discover connections and themes in your knowledge base
 
@@ -33,11 +33,11 @@ MindVault is a sophisticated, AI-powered note-taking application that helps you 
 - **Backend**: Supabase (PostgreSQL, Auth, Real-time)
 - **AI Services**: 
   - Google Gemini for content analysis
-  - Dappier for semantic search and AI copilot
+  - **Dappier** for semantic search and AI copilot
   - ElevenLabs for voice transcription
 - **Visualization**: D3.js for knowledge graphs
-- **Monitoring**: Sentry for error tracking and performance
-- **Deployment**: Netlify with custom domain
+- **Monetization**: RevenueCat for subscription management
+- **Deployment**: Netlify
 
 ## 🛠️ Setup & Installation
 
@@ -59,9 +59,8 @@ VITE_GEMINI_API_KEY=your_gemini_api_key_here
 VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
 VITE_DAPPIER_API_KEY=your_dappier_api_key_here
 
-# Monitoring (Optional)
-VITE_SENTRY_DSN=your_sentry_dsn_here
-VITE_SENTRY_AUTH_TOKEN=your_sentry_auth_token_here
+# Monetization (Optional)
+VITE_REVENUECAT_API_KEY=your_revenuecat_api_key_here
 ```
 
 ### Installation Steps
@@ -92,29 +91,27 @@ VITE_SENTRY_AUTH_TOKEN=your_sentry_auth_token_here
 
 This project leverages several sponsor benefits from the Bolt.new hackathon:
 
-### 🔍 **Dappier AI** - Enhanced Search & Copilot
+### 🔍 **Dappier AI** - Enhanced Search & Copilot ⭐ INTEGRATED
 - **Benefit**: $25 in API credits + 50% off with code `BOLT50`
-- **Integration**: Semantic search and AI copilot features
+- **Integration**: 
+  - **Semantic Search**: `src/components/search/EnhancedSearch.tsx`
+  - **AI Copilot**: `src/components/ai/AICopilot.tsx`
+  - **API Client**: `src/lib/dappier.ts`
 - **Setup**: Sign up at Dappier → Get API key → Add to `.env`
 - **Features**: 
-  - AI-powered semantic search
+  - AI-powered semantic search that understands meaning
   - Intelligent note recommendations
-  - Conversational AI copilot
+  - Conversational AI copilot for note assistance
 
-### 📊 **Sentry** - Error Monitoring
-- **Benefit**: 6 months free Team Plan with code `bolt-sentry-wlh`
-- **Integration**: Complete error tracking and performance monitoring
-- **Setup**: Create Sentry project → Get DSN → Add to `.env`
+### 💰 **RevenueCat** - Monetization ⭐ READY TO INTEGRATE
+- **Benefit**: 100% free for Bolt participants
+- **Integration**: Monetization panel with subscription plans
+- **Setup**: Visit rev.cat/bolt → Get API key → Add to `.env`
 - **Features**:
-  - Real-time error tracking
-  - Performance monitoring
-  - Session replay
-  - Release tracking
-
-### 🌐 **Entri** - Free Domain
-- **Benefit**: 1 year free custom domain
-- **Setup**: Visit Entri with Bolt Pro credentials → Claim domain
-- **Integration**: Custom domain for production deployment
+  - Subscription management
+  - Payment processing
+  - Revenue analytics
+  - Cross-platform support
 
 ### 🌍 **Lingo** - Internationalization
 - **Benefit**: $50 in credits with code `LINGODOTDEV4461484`
@@ -126,16 +123,40 @@ This project leverages several sponsor benefits from the Bolt.new hackathon:
 - **Potential Use**: Video note-taking and AI avatar assistants
 - **Setup**: Sign up → Get 250 free video minutes
 
-### 📱 **RevenueCat** - Monetization
-- **Benefit**: 100% free for Bolt participants
-- **Potential Use**: Premium features and subscriptions
-- **Setup**: Visit rev.cat/bolt → Start for free
+### 🎨 **Pica** - Image Processing
+- **Benefit**: 2 months free Pro access ($200 value)
+- **Potential Use**: Advanced image processing for note attachments
+- **Setup**: Use code `GO-BOLT-fe060339` at checkout
 
-### 🔧 **Additional Sponsors Available**
+### 🔧 **21st.dev** - UI Enhancement
+- **Benefit**: 50% off for one year with code `BOLT-AZQW3SXA`
+- **Potential Use**: AI-powered UI component generation
+- **Setup**: Create account → Use promo code
+
+### 🔗 **Additional Sponsors Available**
 - **Expo**: 1 month free Production plan ($99 value)
-- **21st.dev**: 50% off for UI component generation
 - **DEV++**: Free 1-year membership with exclusive offers
 - **Algorand/IPFS**: $512 value in API credits
+
+## 📍 Where Dappier is Used
+
+Dappier AI is integrated in the following components:
+
+1. **Enhanced Search** (`src/components/search/EnhancedSearch.tsx`):
+   - Semantic search that understands context and meaning
+   - Fallback to regular search if API is unavailable
+   - Recent searches and quick filters
+
+2. **AI Copilot** (`src/components/ai/AICopilot.tsx`):
+   - Conversational AI for asking questions about notes
+   - Context-aware responses based on note content
+   - Intelligent suggestions for follow-up questions
+
+3. **API Client** (`src/lib/dappier.ts`):
+   - Semantic search functionality
+   - Copilot question answering
+   - Insights generation
+   - Fallback search implementation
 
 ## 🏗️ Architecture
 
@@ -157,7 +178,6 @@ This project leverages several sponsor benefits from the Bolt.new hackathon:
 - Row Level Security (RLS) on all tables
 - JWT-based authentication via Supabase
 - API key encryption and secure storage
-- Error monitoring with Sentry
 
 ## 🚀 Deployment
 
@@ -172,17 +192,12 @@ This project leverages several sponsor benefits from the Bolt.new hackathon:
    - Set environment variables
    - Deploy with automatic builds
 
-3. **Custom Domain** (Free with Entri)
-   - Claim free domain through Entri
-   - Configure DNS settings
-   - Enable HTTPS
-
 ### Environment Configuration
 Ensure all environment variables are set in Netlify:
 - Supabase credentials
 - AI service API keys
-- Sentry configuration
-- Custom domain settings
+- Dappier configuration
+- RevenueCat settings
 
 ## 📈 Analytics & Monitoring
 
@@ -193,12 +208,20 @@ Ensure all environment variables are set in Netlify:
 - Knowledge graph metrics
 - User engagement insights
 
-### Sentry Monitoring
-- Real-time error tracking
-- Performance metrics
-- User session replays
-- Release health monitoring
-- Custom alerts and notifications
+## 💰 Monetization Strategy
+
+### Subscription Tiers (via RevenueCat)
+- **Free**: Basic features, limited AI analysis
+- **Pro ($9.99/month)**: Unlimited notes, advanced AI, premium features
+- **Enterprise ($29.99/month)**: Team features, admin dashboard, API access
+
+### Premium Features
+- Advanced AI insights and analysis
+- Unlimited voice transcription
+- Custom themes and branding
+- Priority support
+- Team collaboration
+- API access
 
 ## 🤝 Contributing
 
@@ -216,20 +239,23 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - **Bolt.new** for the amazing development platform
 - **Sponsor Partners** for providing essential services:
-  - Dappier for AI capabilities
-  - Sentry for monitoring
-  - Entri for domain services
+  - **Dappier** for AI-powered search and copilot features
+  - **RevenueCat** for monetization infrastructure
+  - **Lingo** for internationalization capabilities
+  - **Tavus** for video processing potential
+  - **Pica** for image optimization
+  - **21st.dev** for UI enhancement tools
   - Supabase for backend infrastructure
   - Google for AI services
   - ElevenLabs for voice processing
 
 ## 🔗 Links
 
-- **Live Demo**: [Your custom domain]
-- **Documentation**: [Link to detailed docs]
-- **API Reference**: [Link to API docs]
-- **Support**: [Support contact]
+- **Live Demo**: [Your deployed URL]
+- **Dappier Integration**: Enhanced search and AI copilot
+- **RevenueCat Setup**: Ready for subscription monetization
+- **API Documentation**: [Link to API docs]
 
 ---
 
-Built with ❤️ using Bolt.new and powered by cutting-edge AI technology.
+Built with ❤️ using Bolt.new and powered by cutting-edge AI technology from our amazing sponsors.
