@@ -83,7 +83,8 @@ export function VoiceToText({ onTranscript, className = '' }: VoiceToTextProps) 
     try {
       const transcript = await transcribeAudio(audioBlob);
       if (transcript && transcript.trim()) {
-        onTranscript(transcript);
+        // Only call onTranscript if we have a valid transcript
+        onTranscript(transcript.trim());
       } else {
         throw new Error('No speech detected in the recording');
       }
@@ -106,7 +107,7 @@ export function VoiceToText({ onTranscript, className = '' }: VoiceToTextProps) 
       <Button
         onClick={toggleRecording}
         disabled={isProcessing}
-        variant={isRecording ? 'destructive' : 'default'}
+        variant={isRecording ? 'danger' : 'default'}
         size="sm"
         className="flex items-center space-x-2"
       >
